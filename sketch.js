@@ -1,12 +1,6 @@
 let circles = [];
 let explosions = [];
 let popSound;
-let palette = [
-  [176, 66, 66, 204],
-  [224, 207, 186, 204],
-  [149, 45, 36, 204],
-  [168, 131, 122, 204]
-];
 
 function preload() {
   popSound = loadSound('bubble-pop-06-351337.mp3');
@@ -14,18 +8,17 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  background(115, 87, 81);
+  background('#ffcad4');
 
   // 建立泡泡
   for (let i = 0; i < 60; i++) {
-    let radius = random(50, 140);
-    let c = random(palette);
-    let speed = map(radius, 120, 260, 2, 6);
+    let radius = random(20, 80);
+    let speed = random(1, 3);
     circles.push({
       x: random(width),
       y: random(height, height * 1.5),
       r: radius,
-      color: c,
+      alpha: random(50, 255),
       speed: speed,
       life: random(180, 600) // 每顆泡泡壽命（幀數）
     });
@@ -33,7 +26,7 @@ function setup() {
 }
 
 function draw() {
-  background(115, 87, 81);
+  background('#ffcad4');
   noStroke();
 
   // 更新並畫泡泡
@@ -41,7 +34,7 @@ function draw() {
     let c = circles[i];
 
     // 畫泡泡
-    fill(c.color[0], c.color[1], c.color[2], c.color[3]);
+    fill(240, 128, 128, c.alpha);
     ellipse(c.x, c.y, c.r, c.r);
 
     // 高光
@@ -60,7 +53,7 @@ function draw() {
 
     // 泡泡離開畫面或壽命到 → 爆炸
     if (c.y + c.r / 2 < 0 || c.life <= 0) {
-      triggerExplosion(c.x, c.y, c.r, c.color);
+      triggerExplosion(c.x, c.y, c.r);
       circles.splice(i, 1);
       spawnBubble();
     }
@@ -96,7 +89,7 @@ function mousePressed() {
     let c = circles[i];
     let d = dist(mouseX, mouseY, c.x, c.y);
     if (d < c.r / 2) {
-      triggerExplosion(c.x, c.y, c.r, c.color);
+      triggerExplosion(c.x, c.y, c.r);
       circles.splice(i, 1);
       spawnBubble();
       break;
@@ -105,21 +98,20 @@ function mousePressed() {
 }
 
 // 🧨 爆炸動畫 + 聲音
-function triggerExplosion(x, y, r, color) {
-  explosions.push({ x: x, y: y, r: r, color: color.slice(0, 3), t: 0 });
+function triggerExplosion(x, y, r) {
+  explosions.push({ x: x, y: y, r: r, t: 0 });
   if (popSound) popSound.play();
 }
 
 // 🎈 產生新泡泡
 function spawnBubble() {
-  let radius = random(50, 140);
-  let c = random(palette);
-  let speed = map(radius, 120, 260, 2, 6);
+  let radius = random(20, 80);
+  let speed = random(1, 3);
   circles.push({
     x: random(width),
     y: height + radius,
     r: radius,
-    color: c,
+    alpha: random(50, 255),
     speed: speed,
     life: random(180, 600)
   });
